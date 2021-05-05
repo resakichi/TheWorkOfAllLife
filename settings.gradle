@@ -1,0 +1,4 @@
+include ':app'
+rootProject.name = "TheWorkOfAllLife"
+include ':opencv'
+include ':openCVLibrary3410'

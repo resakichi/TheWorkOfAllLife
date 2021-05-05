@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1976d2</color>
+    <color name="colorPrimaryDark">#004ba0</color>
+    <color name="colorPrimaryLight">#63a4ff</color>
+
+    <color name="colorSecondary">#d81b60</color>
+    <color name="colorSecondaryLight">#ff5c8d</color>
+    <color name="colorSecondaryDark">#a00037</color>
+
+    <color name="colorAccent">#03DAC5</color>
+    <color name="btn_circle">#43E437</color>
+    <color name="btn_circle_pressed">#33A82A</color>
+    <color name="gray">#757474</color>
+
+    <color name="orange">#ff6f00</color>
+    <color name="red">#ff1744</color>
+</resources>
