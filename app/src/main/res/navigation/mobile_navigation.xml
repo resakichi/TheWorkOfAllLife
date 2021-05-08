@@ -26,7 +26,7 @@
         tools:layout="@layout/activity_product" />
     <fragment
         android:id="@+id/ingredient"
-        android:name="com.example.theworkofalllife.Ingredient"
+        android:name="com.example.theworkofalllife.ui.Ingredient"
         android:label="fragment_ingredient"
         tools:layout="@layout/fragment_ingredient" />
     <fragment

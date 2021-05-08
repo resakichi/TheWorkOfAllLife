@@ -1,6 +1,7 @@
 package com.example.theworkofalllife.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.example.theworkofalllife.MainActivity
 import com.example.theworkofalllife.Model
 import com.example.theworkofalllife.MyAdapter
 import com.example.theworkofalllife.R
+import com.example.theworkofalllife.model.DataBaseHandler
 import kotlinx.android.synthetic.main.fragment_history.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -40,15 +42,42 @@ class history : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         add_btn.setOnClickListener {
-            fullCardView()
+            val product_data = readData()
+            fullCardView(product_data)
         }
     }
 
-    private fun fullCardView() {
+    private fun readData(): Array<Array<String>> {
+        val db = DataBaseHandler(requireContext())
+        val cursor = db.writableDatabase.rawQuery("SELECT * FROM PRODUCTS", null)
+        val result: MutableList<Array<String>> = mutableListOf()
+        if (cursor.moveToFirst()){
+            var data: MutableList<String> = mutableListOf()
+            while (!cursor.isAfterLast) {
+                data.add(cursor.getString(cursor.getColumnIndex("ID")))
+                Log.d("HISTORY DATA", "ID:" + data[0])
+
+                data.add( cursor.getString(cursor.getColumnIndex("NAME")))
+                Log.d("HISTORY DATA", "NAME:" + data[1])
+
+                data.add(cursor.getString(cursor.getColumnIndex("IMG_PATH")))
+                Log.d("HISTORY DATA", "IMG_PATH:" + data[2])
+                result.add(data.toTypedArray())
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        db.close()
+        return result.toTypedArray()
+    }
+
+    private fun fullCardView(data: Array<Array<String>>) {
         //val appContext = requireContext().applicationContext
-        val image = (activity as MainActivity).currentPhotoPath
-        val name = (activity as MainActivity).name_card
-        arrayList.add(Model(name, image))
+        //val image = (activity as MainActivity).currentPhotoPath
+        //val name = (activity as MainActivity).name_card
+        data.forEach {
+            arrayList.add(Model(it[1], it[2]))
+        }
         val gridLayout = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         val myAdapter = MyAdapter(arrayList, requireContext())
         recyclerView.layoutManager = gridLayout

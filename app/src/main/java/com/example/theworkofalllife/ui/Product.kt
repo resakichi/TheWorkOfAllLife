@@ -13,6 +13,9 @@ import android.widget.ListView
 import com.example.theworkofalllife.Commodity
 import com.example.theworkofalllife.R
 import com.example.theworkofalllife.model.DataBaseHandler
+import com.example.theworkofalllife.model.InsertData
+import com.example.theworkofalllife.model.PrefenceHelper.customPreference
+import com.example.theworkofalllife.model.PrefenceHelper.productID
 import kotlinx.android.synthetic.main.activity_product.*
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 
@@ -20,6 +23,8 @@ class product : AppCompatActivity() {
 
     lateinit var name_prod:String
     lateinit var img_path:String
+
+    private val ID_INCREMENT = "ID_INCREMENT"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +83,7 @@ class product : AppCompatActivity() {
             customLayout.agree.setOnClickListener {
                 mBuilder.dismiss()
                 name_prod = customLayout.ed_textDialog.text.toString()
-                writeData(name_prod, img_path, 1)
+                writeData(name_prod, img_path)
                 returnIntent.putExtra("LAUNCH", "history")
                 returnIntent.putExtra("result", name_prod)
                 finish()
@@ -88,10 +93,16 @@ class product : AppCompatActivity() {
 
     }
 
-    fun writeData(name: String, image: String, id:Int) {
+    fun writeData(name: String, image: String) {
+
+        val perf = customPreference(this, ID_INCREMENT)
+
+        perf.productID += 1
+
         val db = DataBaseHandler(this)
-        val data_prod = Commodity(id, name, image)
-        Log.d("Product", data_prod.ImgPath.toString() + " " + data_prod.name)
-        db.insertProductData(data_prod)
+        val data_prod = Commodity(perf.productID, name, image)
+        Log.d("MyProduct", "Image:" + data_prod.ImgPath.toString() + "\n Name:" +
+                data_prod.name + "\n ID:" + data_prod.id)
+        InsertData(db, this).insertProductData(data_prod)
     }
 }

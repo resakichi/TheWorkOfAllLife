@@ -82,7 +82,7 @@
                 android:background="@drawable/btn_rounded_corners_other"
                 android:drawableLeft="@drawable/ic_baseline_add_24"
                 android:layout_centerInParent="true"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

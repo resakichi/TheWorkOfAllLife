@@ -18,18 +18,17 @@ val DATA_BASE_NAME = "AppData"
 
 class DataBaseHandler(var context: Context): SQLiteOpenHelper(context, DATA_BASE_NAME, null, 1){
     override fun onCreate(p0: SQLiteDatabase?) {
-
-        Log.d("MyApp", "worked")
+        Log.d("MyApp", p0?.version.toString())
 
         var createTable = "CREATE TABLE PRODUCTS (" +
-                "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "ID INTEGER," +
                 "NAME VARCHAR(20), " +
                 "IMG_PATH VARCHAR(200)" +
                 ");"
         p0?.execSQL(createTable)
 
         createTable = "CREATE TABLE COMPOSIT(" +
-                "PROD_ID INTEGER," +
+                "PROD_NAME VARCHAR(50)," +
                 "INGREDIENT_NAME CHAR(50)" +
                 ");"
         p0?.execSQL(createTable)
@@ -56,10 +55,6 @@ class DataBaseHandler(var context: Context): SQLiteOpenHelper(context, DATA_BASE
                     val description = file_xml.getAttributeValue(1)
                     val second_name = file_xml.getAttributeValue(3)
                     val danger_color = file_xml.getAttributeValue(0)
-                    Log.d("DATABASE", danger_color.toString() + "      dangercolor")
-                    Log.d("DATABASE", name.toString() + "      name")
-                    Log.d("DATABASE", description.toString() + "      description")
-                    Log.d("DATABASE", second_name.toString() + "      secondname")
 
                     values.put("NAME", name)
                     values.put("DESCRIPTION", description)
@@ -90,75 +85,4 @@ class DataBaseHandler(var context: Context): SQLiteOpenHelper(context, DATA_BASE
         p0?.execSQL(query)
         onCreate(p0)
     }
-
-    fun insertProductData(commodity: Commodity){
-        val db = this.writableDatabase
-        var cv = ContentValues()
-
-        cv.put("NAME", commodity.name)
-        cv.put("IMG_PATH", commodity.ImgPath)
-
-        var result = db.insert("PRODUCTS", null, cv)
-
-        if (result == -1.toLong()){
-            Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show()
-            Log.d("MyLogsDB","Success write products")
-        }
-        else{
-            Toast.makeText(context, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
-            Log.d("MyLogsDB","Products write fail" + " " + result)
-        }
-    }
-
-    fun insertCompositionData(composition: Composition){
-        val db = this.writableDatabase
-        var cv = ContentValues()
-
-        cv.put("PROD_ID", composition.id_product)
-        cv.put("INGREDIENT_ID", composition.id_ingredient)
-
-        val result = db.insert("INGREDIENTS", null, cv)
-
-        if (result == -1.toLong()){
-            Toast.makeText(context, "Ingredients write fail", Toast.LENGTH_SHORT).show()
-            Log.d("MyLogsDB","Ingredients write fail")
-        }
-        else{
-            Toast.makeText(context, "Success write products", Toast.LENGTH_SHORT).show()
-            Log.d("MyLogsDB","Success write products")
-        }
-    }
-
-    fun insertIntoIngredients(){
-        var values = ContentValues()
-        val res = context.resources
-        val db = this.writableDatabase
-
-        var file_xml: XmlResourceParser = res.getXml(R.xml.ingredients_record)
-        try {
-            var eventType = file_xml.eventType
-            while (eventType != XmlPullParser.END_DOCUMENT){
-                if ((eventType == XmlPullParser.START_TAG)
-                    && (file_xml.name.equals("record"))){
-                    val name = file_xml.getAttributeValue(0)
-                    val description = file_xml.getAttributeValue(1)
-                    val secondName = file_xml.getAttributeValue(2)
-
-                    values.put("NAME", name)
-                    values.put("DESCRIPTION", description)
-                    values.put("SEC_NAME", secondName)
-
-                    db.insert("INGREDIENTS", null, values)
-                }
-                eventType = file_xml.next()
-            }
-        }catch (e:XmlPullParserException){
-            Log.e("MyTest", e.message, e)
-        }catch (e: IOException){
-            Log.e("MyTest", e.message, e)
-        }finally {
-            file_xml.close()
-        }
-    }
-
 }

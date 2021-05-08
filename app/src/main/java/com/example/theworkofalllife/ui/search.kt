@@ -5,7 +5,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
-import com.example.theworkofalllife.Ingredient
 import com.example.theworkofalllife.MainActivity
 import com.example.theworkofalllife.R
 import kotlinx.android.synthetic.main.fragment_search.*

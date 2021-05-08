@@ -14,10 +14,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.theworkofalllife.model.DataBaseHandler
 import com.example.theworkofalllife.tesseract.FileUtil
-import com.example.theworkofalllife.ui.history
-import com.example.theworkofalllife.ui.home
-import com.example.theworkofalllife.ui.product
-import com.example.theworkofalllife.ui.search
+import com.example.theworkofalllife.ui.*
 import com.googlecode.tesseract.android.TessBaseAPI
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var recivedText: String
     private var imageUri: Uri? = null
 
-    var db = DataBaseHandler(this)
     lateinit var listNames: Array<String>
     lateinit var list_adapter: ArrayAdapter<String>
     var ing_position = 0
@@ -138,12 +134,12 @@ class MainActivity : AppCompatActivity() {
                 else if (launch == "history"){
                     if (result != null){
                         currentPhotoPath = takeImage(result)
-                        //makeCurrentfragment(history())
+                        makeCurrentfragment(history())
                     }
                 }
             }
             else{
-                Log.d("MyLogs", "Result data is null")
+                Log.d("MyLogs", "Result data is null. \n Result code:" + resultCode.toString())
             }
         }
     }
@@ -179,8 +175,8 @@ class MainActivity : AppCompatActivity() {
         return extractedText
     }
 */
-    //исправить, не работает
 
+    //улучшить для распознания текста на чёрном фоне
     @Throws(Exception::class)
     private fun extractText(bitmap: Bitmap): String{
 
@@ -228,6 +224,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun readDatabaseSearch(){
+        val db = DataBaseHandler(this)
         var dbCursor = db.writableDatabase.rawQuery("SELECT NAME, DESCRIPTION " +
                 "FROM INGREDIENTS", null)
 
@@ -247,9 +244,11 @@ class MainActivity : AppCompatActivity() {
 
         listNames = listData.toTypedArray()
         list_adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, listNames)
+        db.close()
     }
 
     fun readDataBaseIngredient(id_ingr: Int): ArrayList<String> {
+        val db = DataBaseHandler(this)
         val name = listNames[id_ingr]
         var dbCursor = db.writableDatabase.rawQuery("SELECT NAME, DESCRIPTION, SEC_NAME, DANGER_COLOR " +
                 "FROM INGREDIENTS " +
@@ -271,9 +270,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         dbCursor.close()
+        db.close()
         return result
     }
 
+    //записывает в истоию ингредиенты (но это не точно)
     private fun coincidences(): ArrayList<String>{
         var composits = arrayListOf<String>()
         var n = listNames.size
@@ -297,6 +298,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun takeImage(name_img: String): String? {
+        val db = DataBaseHandler(this)
         var dbCursor = db.writableDatabase.rawQuery("SELECT NAME, IMG_PATH " +
                 "FROM PRODUCTS " +
                 "WHERE NAME = '$name_img';", null)
@@ -314,5 +316,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("DataBase", "Take image fail")
             return null
         }
+        db.close()
     }
 }
